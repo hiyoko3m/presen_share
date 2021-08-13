@@ -1,0 +1,16 @@
+body {
+  margin: 0;
+}
+
+table {
+  width: 100px;
+}
+
+.switch {
+  width: 40px;
+}
+
+.description {
+  width: 60px;
+}
+

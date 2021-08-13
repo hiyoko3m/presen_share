@@ -1,0 +1,39 @@
+{
+    "name": "Google Slides presentation sharing",
+    "description": "Sharing Google Slides presentation's next and previous actions.",
+    "version": "1.0",
+    "manifest_version": 3,
+    "background": {
+        "service_worker": "background.js"
+    },
+    "permissions": ["storage", "activeTab", "scripting"],
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon": {
+            "16": "/images/icon16.png",
+            "32": "/images/icon32.png",
+            "48": "/images/icon48.png",
+            "128": "/images/icon128.png"
+        }
+    },
+    "icons": {
+        "16": "/images/icon16.png",
+        "32": "/images/icon32.png",
+        "48": "/images/icon48.png",
+        "128": "/images/icon128.png"
+    },
+    "commands": {
+        "previous_page": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+1"
+            },
+            "description": "previous page"
+        },
+        "next_page": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+2"
+            },
+            "description": "next page"
+        }
+    }
+}
