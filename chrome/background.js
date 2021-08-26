@@ -21,10 +21,23 @@ chrome.commands.onCommand.addListener((command, tab) => {
                 target: { tabId: tab.id },
                 function: toNextPage
             });
+        } else if (command === "fetch_room") {
+            chrome.scripting.executeScript({
+                target: { tabId: tab.id },
+                function: fetchRoom
+            });
         }
     });
 });
 
+
+function fetchRoom() {
+    const base_url = "http://localhost:8000";
+
+    fetch(base_url + "/room", {method: "POST"})
+        .then(response => response.json())
+        .then(data => console.log(data));
+}
 
 function toPrevPage() {
     const target = presenDocument();
