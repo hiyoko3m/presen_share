@@ -32,9 +32,12 @@ class RoomManager:
     def prepare(self, room_id: str):
         self.connections[room_id] = None
 
+    def does_exist(self, room_id: str):
+        return room_id in self.connections
+
     async def connect(self, room_id: str, websocket: WebSocket) -> bool:
         await websocket.accept()
-        if room_id in self.connections:
+        if room_id in self.connections and self.connections[room_id] is None:
             self.connections[room_id] = websocket
             return True
         else:
@@ -65,12 +68,12 @@ manager = RoomManager()
     response_model=RoomID,
 )
 async def create_room():
-    room_id = str(uuid4())
+    room_id = str(uuid4())[:6]
     manager.prepare(room_id)
     return RoomID(room_id=room_id)
 
 
-@app.websocket("/room-ws/{room_id}")
+@app.websocket("/room/{room_id}")
 async def open_connection(websocket: WebSocket, room_id: str = Path(...)):
     if not await manager.connect(room_id, websocket):
         return
@@ -80,6 +83,16 @@ async def open_connection(websocket: WebSocket, room_id: str = Path(...)):
             await websocket.receive_text()
     except WebSocketDisconnect:
         await manager.disconnect(room_id)
+
+
+@app.get(
+    "/room/{room_id}",
+    summary="check if the room exists",
+    description="Check if the room which has the specified id exists",
+    response_model=bool,
+)
+async def does_room_exist(room_id: str = Path(...)):
+    return manager.does_exist(room_id)
 
 
 @app.post(
