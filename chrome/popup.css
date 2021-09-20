@@ -1,0 +1,16 @@
+body {
+  margin: 10px;
+  width: 250px;
+}
+
+.container {
+  padding-left: 10px;
+}
+
+.room-id {
+  width: 50px;
+}
+
+button {
+  font-size: x-small;
+}
