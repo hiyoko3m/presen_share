@@ -99,18 +99,21 @@ async def does_room_exist(room_id: str = Path(...)):
     "/room/{room_id}/prev",
     summary="back to the previous slide",
     description="Go to the previous slide of the host of the room.",
+    response_model=str,
 )
 async def back_to_prev_slide(room_id: str = Path(...)):
     if not await manager.operate_slide(room_id, "prev"):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    return "ok"
 
 
 @app.post(
     "/room/{room_id}/next",
     summary="go to the next slide",
     description="Go to the next slide of the host of the room.",
-    response_model=None,
+    response_model=str,
 )
 async def go_to_next_slide(room_id: str = Path(...)):
     if not await manager.operate_slide(room_id, "next"):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    return "ok"
