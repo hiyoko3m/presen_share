@@ -36,8 +36,8 @@ chrome.runtime.onMessage.addListener((request) => {
         }
 
         chrome.storage.local.get("backend_url", ({ backend_url }) => {
-            // スキーマ（http or https）を除いてwsを付ける
-            const pos = backend_url.indexOf(":");
+            // スキーマ（http or https）を除いてws or wssを付ける
+            const pos = "http".length;
             const ws_url = `ws${backend_url.slice(pos)}/room/${request.room_id}`;
             console.debug("Connect to", ws_url);
 
