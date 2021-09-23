@@ -45,8 +45,8 @@ class RoomManager:
             return False
 
     async def disconnect(self, room_id: str):
-        websocket = self.connections.pop(room_id, None)
-        if websocket is not None:
+        if (websocket := self.connections.get(room_id)) is not None:
+            self.connections[room_id] = None
             await websocket.close()
 
     async def operate_slide(self, room_id: str, direction: str) -> bool:
