@@ -15,6 +15,12 @@ chrome.storage.local.get("host_room_id", ({ host_room_id }) => {
 });
 
 reset_room_button.addEventListener("click", () => {
+    chrome.storage.local.get("connecting_tab", ({ connecting_tab }) => {
+        if (connecting_tab) {
+            disconnect(connecting_tab);
+        }
+    });
+
     chrome.storage.local.remove("host_room_id");
     host_room_id_input.value = "";
     on_room_nonexistence();
@@ -36,7 +42,6 @@ function on_room_nonexistence() {
 
 create_room_button.addEventListener("click", () => {
     chrome.storage.local.get("backend_url", ({ backend_url }) => {
-        console.log(backend_url);
         fetch(`${backend_url}/room`, { method: "POST"})
             .then(response => response.json())
             .then(data => {
@@ -54,10 +59,50 @@ create_room_button.addEventListener("click", () => {
 })
 
 connect_button.addEventListener("click", () => {
-    // TODO
-    // WebSocket接続を開く（background.jsで）
+    chrome.storage.local.get("connecting_tab", ({ connecting_tab }) => {
+        if (!connecting_tab) {
+            connect();
+        } else {
+            disconnect(connecting_tab);
+        }
+    });
 })
 
+function connect() {
+    // 本当はいったんボタンを無効にしておいて、
+    // messageのlistenerのほうでpromiseを使い、
+    // 処理が終わったらその結果次第でボタンの状態を変えて有効化するのが
+    // いいと思う。disconnectも同じ
+    let queryOptions = { active: true, currentWindow: true };
+    chrome.tabs.query(queryOptions, (tabs) => {
+        if (tabs.length >= 1) {
+            chrome.storage.local.set({ connecting_tab: tabs[0].id });
+            update_connect_button();
+
+            chrome.tabs.sendMessage(tabs[0].id, { command: "connect", room_id: host_room_id_input.value });
+        }
+    })
+}
+
+function disconnect(tab_id) {
+    chrome.storage.local.remove("connecting_tab");
+    update_connect_button();
+
+    chrome.tabs.sendMessage(tab_id, { command: "disconnect" });
+}
+
+// connecting_tabのonchange listenerに登録するほうがいい
+function update_connect_button() {
+    chrome.storage.local.get("connecting_tab", ({ connecting_tab }) => {
+        if (connecting_tab) {
+            connect_button.innerText = "接続切断";
+        } else {
+            connect_button.innerText = "接続開始";
+        }
+    });
+}
+
+update_connect_button();
 
 // クライアント部屋ID
 let client_room_id_input = document.getElementById("client-room-id");
