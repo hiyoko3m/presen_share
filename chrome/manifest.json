@@ -28,25 +28,5 @@
             "matches": ["https://docs.google.com/presentation/d/*"],
             "js": ["content-scripts.js"]
         }
-    ],
-    "commands": {
-        "previous_page": {
-            "suggested_key": {
-                "default": "Ctrl+Shift+1"
-            },
-            "description": "previous page"
-        },
-        "next_page": {
-            "suggested_key": {
-                "default": "Ctrl+Shift+2"
-            },
-            "description": "next page"
-        },
-        "fetch_room": {
-            "suggested_key": {
-                "default": "Ctrl+Shift+3"
-            },
-            "description": "fetch room"
-        }
-    }
+    ]
 }
