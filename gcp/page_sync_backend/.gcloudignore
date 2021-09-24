@@ -1,0 +1,11 @@
+.dockerignore
+.gcloudignore
+.mypy_cache/
+.pytest_cache/
+.venv
+Makefile
+README.md
+setup.cfg
+tests/
+
+__pycache__/
