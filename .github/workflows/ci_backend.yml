@@ -1,0 +1,57 @@
+name: CI for backend
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  ci:
+    name: Check Python files
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: poetry install
+
+    # 全てのチェックが実行されるようにcontinue-on-errorを付ける
+    - name: Lint with flake8
+      id: flake8
+      run: poetry run flake8 --count --show-source --statistics
+      continue-on-error: true
+
+    - name: Lint with mypy
+      id: mypy
+      run: poetry run mypy . --pretty
+      continue-on-error: true
+
+    - name: Format with black
+      id: black
+      run: poetry run black . --check --diff
+      continue-on-error: true
+
+    - name: Format with isort
+      id: isort
+      run: poetry run isort . --check-only
+      continue-on-error: true
+
+    - name: Test with pytest
+      id: pytest
+      run: poetry run pytest
+      continue-on-error: true
+
+    - name: Check whether failures exist
+      if: ${{ steps.flake8.outcome == 'failure'
+        || steps.mypy.outcome == 'failure'
+        || steps.black.outcome == 'failure'
+        || steps.isort.outcome == 'failure'
+        || steps.pytest.outcome == 'failure' }}
+      run: |
+        echo "::error::flake8: ${{ steps.flake8.outcome }}," \
+          "mypy: ${{ steps.mypy.outcome }}," \
+          "black: ${{ steps.black.outcome }}," \
+          "isort: ${{ steps.isort.outcome }}," \
+          "pytest: ${{ steps.pytest.outcome }}"
+        sh -c "exit 1"

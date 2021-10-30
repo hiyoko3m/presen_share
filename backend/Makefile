@@ -27,7 +27,7 @@ test:
 	poetry run pytest tests
 
 lint:
-	poetry run mypy .
-	poetry run flake8
+	poetry run mypy . --pretty
+	poetry run flake8 --show-source
 
 
