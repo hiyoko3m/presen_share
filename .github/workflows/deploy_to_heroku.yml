@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'backend/**'
 
 jobs:
   build-and-push:
@@ -36,9 +38,9 @@ jobs:
     - name: Push to Heroku Container Registry
       run: |
         heroku container:push --app ${{ secrets.HEROKU_APPNAME }} web
-      working-directory: gcp/page_sync_backend
+      working-directory: backend
 
     - name: Release pushed container
       run: |
         heroku container:release --app ${{ secrets.HEROKU_APPNAME }} web
-      working-directory: gcp/page_sync_backend
+      working-directory: backend
