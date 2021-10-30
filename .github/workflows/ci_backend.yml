@@ -5,6 +5,10 @@ on:
       - main
   workflow_dispatch:
 
+defaults:
+  run:
+    working-directory: backend
+
 jobs:
   ci:
     name: Check Python files
