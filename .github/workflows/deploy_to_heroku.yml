@@ -19,9 +19,9 @@ jobs:
         password: ${{ secrets.heroku_password }}
     - name: Push to Heroku Container Registry
       run: |
-        heroku container:push web
+        heroku container:push -a=gslide-presen-share web
       working-directory: gcp/page_sync_backend
     - name: Release pushed container
       run: |
-        heroku container:release web
+        heroku container:release -a=gslide-presen-share web
       working-directory: gcp/page_sync_backend
