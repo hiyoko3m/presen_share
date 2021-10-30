@@ -17,7 +17,7 @@ def test_success_scenario(client):
 
     room_id = response.json()["room_id"]
 
-    with client.websocket_connect(f"/room-ws/{room_id}") as websocket:
+    with client.websocket_connect(f"/room/{room_id}") as websocket:
         response = client.post(f"/room/{room_id}/prev")
         assert response.status_code == 200
 
@@ -33,7 +33,7 @@ def test_success_scenario(client):
 
 def test_failure_scenario(client):
     with pytest.raises(WebSocketDisconnect):
-        with client.websocket_connect("/room-ws/invalid") as websocket:
+        with client.websocket_connect("/room/invalid") as websocket:
             client.post("/room/invalid/prev")
             websocket.receive_text()
 
