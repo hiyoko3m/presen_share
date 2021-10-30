@@ -41,10 +41,10 @@ jobs:
 
     - name: Push to Heroku Container Registry
       run: |
-        heroku container:push --app ${{ secrets.HEROKU_APPNAME }} web
+        heroku container:push --app=${{ secrets.HEROKU_APPNAME }} web
       working-directory: gcp/page_sync_backend
 
     - name: Release pushed container
       run: |
-        heroku container:release --app ${{ secrets.HEROKU_APPNAME }} web
+        heroku container:release --app=${{ secrets.HEROKU_APPNAME }} web
       working-directory: gcp/page_sync_backend
