@@ -20,14 +20,14 @@ build:
 	docker build -t page_sync_backend:latest .
 
 format:
-	poetry run isort . --skip .venv
-	poetry run black . --exclude .venv
+	poetry run isort .
+	poetry run black .
 
 test:
 	poetry run pytest tests
 
 lint:
-	poetry run mypy . --exclude .venv
-	poetry run flake8 . --exclude .venv
+	poetry run mypy .
+	poetry run flake8
 
 
