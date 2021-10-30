@@ -41,7 +41,7 @@ jobs:
 
     - name: Push to Heroku Container Registry
       run: |
-        heroku container:push --app=gslide-presen-share web
+        heroku container:push -a=gslide-presen-share web
       working-directory: gcp/page_sync_backend
 
     - name: Release pushed container
