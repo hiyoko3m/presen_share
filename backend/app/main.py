@@ -1,7 +1,7 @@
 from typing import Optional
 from uuid import uuid4
 
-from fastapi import FastAPI, Path, status, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, Path, WebSocket, WebSocketDisconnect, status
 from fastapi.exceptions import HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
