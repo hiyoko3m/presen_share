@@ -1,0 +1,143 @@
+<body>
+  <h2>WebRTC</h2>
+  <div id="signaling">
+    <h3>Offer Side:</h3>
+    <div id="offer-side">
+      <form action="">
+        <button type="button" id="offer-button" onclick="createOffer()">Create Offer</button>
+      </form>
+    </div>
+
+    <h3>Answer Side:</h3>
+    <div id="answer-side">
+      <form action="">
+        <input type="text" id="remote-sdp" />
+        <button type="button" id="remote-sdp-button" onclick="createAnswer()">Set SDP</button>
+      </form>
+    </div>
+  </div>
+
+  <br>
+  <h3>data channel received</h3>
+  <textarea id="data-channel-received" style="width: 500px; height: 300px;" disabled></textarea>
+
+  <br>
+  <h3>Session Description</h3>
+  <textarea id="sdp" style="width: 500px; height: 300px;" disabled></textarea>
+
+
+  <script type="text/javascript">
+    // init
+    const conf = {"iceServers": [], RtpDataChannels: true};
+    rtcp = new RTCPeerConnection(conf);
+    var dataChannel = rtcp.createDataChannel("sample data channel", {negotiated: true, id: 0});
+
+    const displaySdp = function(sdp) {
+      var sdpElement = document.getElementById("sdp");
+      sdpElement.textContent = sdp;
+    }
+
+    const CRLF2SEP = function(desc) {
+      // /r/n
+      var CR = String.fromCharCode(13);
+      var LF = String.fromCharCode(10);
+      return desc.sdp.split(CR+LF).join('SEP');
+    }
+
+    const SEP2CRLF = function(desc) {
+      // /r/n
+      var CR = String.fromCharCode(13);
+      var LF = String.fromCharCode(10);
+      console.log(desc);
+      return desc.replace(/SEP/g, CR+LF)
+    }
+
+    // offerの作成とlocal descriptionの設定
+    const createOffer = function() {
+      rtcp.createOffer()
+        .then(function(desc){
+          // 冗長＋雑
+          displaySdp(CRLF2SEP(desc));
+          updateOfferUI();
+          return rtcp.setLocalDescription(desc);
+        })
+        .catch(function(reason){
+        console.log(reason);
+      });
+    }
+
+    const updateOfferUI = function (){
+      document.getElementById("remote-sdp").disabled = true;
+      document.getElementById("remote-sdp-button").disabled = true;
+
+      document.getElementById("offer-side").innerHTML = `
+        <form action="">
+          <input type="text" id="offer-remote-sdp" />
+          <button type="button" id="offer-remote-sdp-button" onclick="setRemoteDescription(document.getElementById('offer-remote-sdp').value, 'answer')">Set SDP</button>
+        </form>
+      `;
+    }
+
+    const setRemoteDescription = function(desc, localOrAnswer){
+      desc = new RTCSessionDescription({
+        "type" : localOrAnswer,
+        "sdp" : SEP2CRLF(desc),
+      });
+      console.log(desc);
+      rtcp.setRemoteDescription(desc);
+
+      // dataChannel = rtcp.createDataChannel("sample data channel", {negotiated: true, id: 0});
+      // console.log(dataChannel);
+
+      document.getElementById("signaling").innerHTML = `
+        <button type="button" onclick="sendData()">
+          send
+        </button>
+      `;
+    }
+
+    // answerの作成とremote/local descriptionの設定 
+    const createAnswer = function() {
+      setRemoteDescription(
+        document.getElementById("remote-sdp").value,
+        "offer"
+      )
+
+      rtcp.createAnswer().then(function(desc) {
+        rtcp.setLocalDescription(desc);
+        displaySdp(CRLF2SEP(desc));
+      })
+    }
+
+    const sendData = function() {
+      console.log("hello");
+      dataChannel.send("Hello World!");
+      console.log(rtcp);
+
+      dataChannel.onopen = function (event) {
+        console.log("tmp");
+        dataChannel.send("Hello World!");
+      };
+    }
+
+    rtcp.onnegotiationneeded = () =>
+    {
+      console.log( "Event : Negotiation needed" );
+        rtcp.createOffer()
+        .then(offer => rtcp.setLocalDescription(offer))
+        .then(() => sendSignalingMessage({
+          type: "offer",
+          sdp: rtcp.localDescription
+        }))
+        .catch(err => {
+          /* handle error */
+        });
+    };
+
+    dataChannel.onmessage = function(event) {
+      var el = document.getElementById("data-channel-received");
+      el.innerHTML += event.data;
+      console.log("receive");
+    }
+  </script>
+</body>
