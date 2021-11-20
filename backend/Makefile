@@ -14,7 +14,7 @@ run:
 		--reload --reload-dir app
 
 run-build: build
-	docker run --rm -p 8000:80 page_sync_backend:latest
+	docker run --rm -e PORT=8000 -p 8000:8000 page_sync_backend:latest
 
 build:
 	docker build -t page_sync_backend:latest .
