@@ -1,3 +1,7 @@
+// バックグラウンドサーバのURL
+let url_input = document.getElementById("background-url");
+// バックグラウンドサーバのURLの更新ボタン
+let url_update_button = document.getElementById("background-url-update-button");
 // ホスト部屋ID
 let host_room_id_input = document.getElementById("host-room-id");
 // 部屋作成
@@ -124,6 +128,7 @@ function operate_slide(dir) {
     chrome.storage.local.get("backend_url", ({ backend_url }) => {
         fetch(`${backend_url}/room/${room_id}/${dir}`, { method: "POST"})
             .then(response => {
+                console.log(response.ok);
                 if (!response.ok) {
                     throw new Error(`${dir} button error`);
                 }
@@ -134,3 +139,14 @@ function operate_slide(dir) {
     });
 }
 
+chrome.storage.local.get("backend_url", (data) => {
+    let url = data.backend_url;
+    console.log(url);
+    url_input.value = url;
+})
+
+
+url_update_button.addEventListener("click", () => {
+    let backend_url = url_input.value;
+    chrome.storage.local.set({ backend_url });
+})
