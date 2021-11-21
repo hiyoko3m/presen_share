@@ -14,3 +14,12 @@ body {
 button {
   font-size: x-small;
 }
+
+.status-table {
+  background-color: #e8e8e8;
+  width: 100%;
+  border-radius: 5px 5px 5px 5px;
+}
+.status-table td {
+  text-align: center;
+}

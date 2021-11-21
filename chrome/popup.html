@@ -4,6 +4,13 @@
     <meta charset="utf-8">
     <link rel="stylesheet" href="popup.css">
   </head>
+  <header>
+    <div>
+      <img style="vertical-align: middle;" src="images/icon32.png"></img>
+      <span style="vertical-align: middle;">Google Slides presentation sharing</span>
+      <hr>
+    </div>
+  </header>
   <body>
     <div id="background" class="container">
       <p class="sec-title">サーバURL</p>
@@ -22,6 +29,31 @@
       <input id="client-room-id" class="room-id" type="text" />
       <button id="prev">前へ</button>
       <button id="next">次へ</button>
+    </div>
+    <hr>
+    <div id="status" class="container">
+      <p class="sec-title">status</p>
+        <table class="status-table">
+          <tr><td>バックエンドサーバURL</td></tr>
+          <tr><td id="status-table-backend-server-url"><p></p></td></tr>
+        </table>
+        <br>
+
+        <table class="status-table">
+          <thead><tr><td></td><td>部屋番号</td><td>is connected?</td></tr></thead>
+          <tbody>
+            <tr>
+              <td>ホスト</td>
+              <td id="status-table-host-room-number"></td>
+              <td id="status-table-host-is-connected">no</td>
+            </tr>
+            <tr>
+              <td>クライアント</td>
+              <td id="status-table-client-room-number"></td>
+              <td id="status-table-client-is-connected">no</td>
+            </tr>
+          </tbody>
+        </table>
     </div>
     <script src="popup.js"></script>
   </body>

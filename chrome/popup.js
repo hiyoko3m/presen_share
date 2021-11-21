@@ -11,10 +11,18 @@ let reset_room_button = document.getElementById("reset-room");
 // 接続開始
 let connect_button = document.getElementById("connect");
 
+// status table
+// ユーザ起因のイベントで、popupに表示するステータス変更用
+let status_table_backend_server_url = document.getElementById("status-table-backend-server-url");
+let status_table_host_room_number = document.getElementById("status-table-host-room-number");
+let status_table_host_is_connected = document.getElementById("status-table-host-is-connected");
+let status_table_client_room_number = document.getElementById("status-table-client-room-number");
+let status_table_client_is_connected = document.getElementById("status-table-client-is-connected");
+
 chrome.storage.local.get("host_room_id", ({ host_room_id }) => {
     if (host_room_id) {
         host_room_id_input.value = host_room_id;
-        on_room_existence();
+        on_room_existence(host_room_id);
     }
 });
 
@@ -31,10 +39,13 @@ reset_room_button.addEventListener("click", () => {
 })
 
 // 部屋IDがあるときのボタンにする
-function on_room_existence() {
+function on_room_existence(room_id) {
     create_room_button.setAttribute("disabled", "");
     reset_room_button.removeAttribute("disabled");
     connect_button.removeAttribute("disabled");
+    status_table_host_room_number.innerHTML = room_id;
+    // todo: 新規作成時以外、websocket connectionが生きているかcheckが必要
+    // status_table_host_is_connected.innerHTML = 'yes';
 }
 
 // 初期状態時のボタンにする
@@ -42,6 +53,8 @@ function on_room_nonexistence() {
     create_room_button.removeAttribute("disabled");
     reset_room_button.setAttribute("disabled", "");
     connect_button.setAttribute("disabled", "");
+    status_table_host_room_number.innerHTML = "";
+    status_table_host_is_connected.innerHTML = "no";
 }
 
 create_room_button.addEventListener("click", () => {
@@ -54,7 +67,7 @@ create_room_button.addEventListener("click", () => {
                 chrome.storage.local.set({ host_room_id: room_id });
                 host_room_id_input.value = room_id;
 
-                on_room_existence();
+                on_room_existence(room_id);
             })
             .catch(error => {
                 console.error("fetch error: ", error);
@@ -100,8 +113,10 @@ function update_connect_button() {
     chrome.storage.local.get("connecting_tab", ({ connecting_tab }) => {
         if (connecting_tab) {
             connect_button.innerText = "接続切断";
+            status_table_host_is_connected.innerHTML = "yes";
         } else {
             connect_button.innerText = "接続開始";
+            status_table_host_is_connected.innerHTML = "no";
         }
     });
 }
@@ -125,28 +140,44 @@ next_button.addEventListener("click", () => {
 
 function operate_slide(dir) {
     let room_id = client_room_id_input.value;
+    status_table_client_room_number.innerHTML = room_id;
+
     chrome.storage.local.get("backend_url", ({ backend_url }) => {
         fetch(`${backend_url}/room/${room_id}/${dir}`, { method: "POST"})
             .then(response => {
                 console.log(response.ok);
                 if (!response.ok) {
+                    status_table_client_is_connected.innerHTML = "no";
                     throw new Error(`${dir} button error`);
+                } else {
+                    status_table_client_is_connected.innerHTML = "yes";
                 }
             })
             .catch(error => {
+                status_table_client_is_connected.innerHTML = "no";
                 console.error("fetch error: ", error);
             })
     });
+}
+
+function escapeHTML(string){
+    return string.replace(/&/g, '&lt;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, "&#x27;");
 }
 
 chrome.storage.local.get("backend_url", (data) => {
     let url = data.backend_url;
     console.log(url);
     url_input.value = url;
+    status_table_backend_server_url.innerHTML = escapeHTML(url);
 })
 
 
 url_update_button.addEventListener("click", () => {
     let backend_url = url_input.value;
     chrome.storage.local.set({ backend_url });
+    status_table_backend_server_url.innerHTML = escapeHTML(backend_url);
 })
