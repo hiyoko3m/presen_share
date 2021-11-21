@@ -1,7 +1,7 @@
-// バックグラウンドサーバのURL
-let url_input = document.getElementById("background-url");
-// バックグラウンドサーバのURLの更新ボタン
-let url_update_button = document.getElementById("background-url-update-button");
+// バックエンドのURL
+let backend_url = document.getElementById("backend-url");
+// バックエンドのURLの更新ボタン
+let backend_url_update_button = document.getElementById("backend-url-update-button");
 // ホスト部屋ID
 let host_room_id_input = document.getElementById("host-room-id");
 // 部屋作成
@@ -13,7 +13,7 @@ let connect_button = document.getElementById("connect");
 
 // status table
 // ユーザ起因のイベントで、popupに表示するステータス変更用
-let status_table_backend_server_url = document.getElementById("status-table-backend-server-url");
+let status_table_backend_url = document.getElementById("status-table-backend-url");
 let status_table_host_room_number = document.getElementById("status-table-host-room-number");
 let status_table_host_is_connected = document.getElementById("status-table-host-is-connected");
 let status_table_client_room_number = document.getElementById("status-table-client-room-number");
@@ -171,13 +171,14 @@ function escapeHTML(string){
 chrome.storage.local.get("backend_url", (data) => {
     let url = data.backend_url;
     console.log(url);
-    url_input.value = url;
-    status_table_backend_server_url.innerHTML = escapeHTML(url);
+    backend_url.value = url;
+    status_table_backend_url.innerHTML = escapeHTML(url);
 })
 
 
-url_update_button.addEventListener("click", () => {
-    let backend_url = url_input.value;
-    chrome.storage.local.set({ backend_url });
-    status_table_backend_server_url.innerHTML = escapeHTML(backend_url);
+// todo: 変更時にホスト、クライアントの状態のリフレッシュが必要
+backend_url_update_button.addEventListener("click", () => {
+    let url = backend_url.value;
+    chrome.storage.local.set({ url });
+    status_table_backend_url.innerHTML = escapeHTML(url);
 })
