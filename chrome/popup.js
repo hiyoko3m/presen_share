@@ -179,6 +179,6 @@ chrome.storage.local.get("backend_url", (data) => {
 // todo: 変更時にホスト、クライアントの状態のリフレッシュが必要
 backend_url_update_button.addEventListener("click", () => {
     let url = backend_url.value;
-    chrome.storage.local.set({ url });
+    chrome.storage.local.set({'backend_url': url});
     status_table_backend_url.innerHTML = escapeHTML(url);
 })
