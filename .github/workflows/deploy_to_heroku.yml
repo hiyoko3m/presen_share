@@ -5,6 +5,7 @@ on:
       - main
     paths:
       - 'backend/**'
+      - '.github/workflows/deply_to_heroku.yml'
 
 jobs:
   build-and-push:
