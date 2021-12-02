@@ -14,13 +14,6 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Login to Heroku Container Registry
-      uses: docker/login-action@v1
-      with:
-        registry: registry.heroku.com
-        username: ${{ secrets.HEROKU_USERNAME }}
-        password: ${{ secrets.HEROKU_PASSWORD }}
-
     - name: Prepare Heroku login credentials
       run: |
         cat > ~/.netrc <<EOF
@@ -34,6 +27,10 @@ jobs:
       env:
         HEROKU_EMAIL: ${{ secrets.HEROKU_USERNAME }}
         HEROKU_API_KEY: ${{ secrets.HEROKU_PASSWORD }}
+
+    - name: Login to Heroku Container Registry
+      run: |
+        heroku container:login
 
     - name: Push to Heroku Container Registry
       run: |
