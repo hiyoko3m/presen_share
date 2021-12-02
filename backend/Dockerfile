@@ -1,7 +1,7 @@
 FROM python:3.9 AS exporter
 COPY ./poetry.lock ./pyproject.toml /
 RUN pip3 install poetry \
-    && poetry export -f requirements.txt > requirements.txt
+    && poetry export -f requirements.txt --output requirements.txt
 
 FROM python:3.9 AS builder
 COPY --from=exporter /requirements.txt /requirements.txt

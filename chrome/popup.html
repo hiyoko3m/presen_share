@@ -4,7 +4,19 @@
     <meta charset="utf-8">
     <link rel="stylesheet" href="popup.css">
   </head>
+  <header>
+    <div>
+      <img style="vertical-align: middle;" src="images/icon32.png"></img>
+      <span style="vertical-align: middle;">Google Slides presentation sharing</span>
+      <hr>
+    </div>
+  </header>
   <body>
+    <div id="backend" class="container">
+      <p class="sec-title">バックエンドURL</p>
+      <input id="backend-url" type="url" />
+      <button id="backend-url-update-button">更新</button>
+    </div>
     <div id="host" class="container">
       <p class="sec-title">ホスト</p>
       <input id="host-room-id" class="room-id" type="text" disabled />
@@ -17,6 +29,31 @@
       <input id="client-room-id" class="room-id" type="text" />
       <button id="prev">前へ</button>
       <button id="next">次へ</button>
+    </div>
+    <hr>
+    <div id="status" class="container">
+      <p class="sec-title">status</p>
+        <table class="status-table">
+          <tr><td>バックエンドURL</td></tr>
+          <tr><td id="status-table-backend-url"><p></p></td></tr>
+        </table>
+        <br>
+
+        <table class="status-table">
+          <thead><tr><td></td><td>部屋番号</td><td>接続済み?</td></tr></thead>
+          <tbody>
+            <tr>
+              <td>ホスト</td>
+              <td id="status-table-host-room-number"></td>
+              <td id="status-table-host-is-connected">no</td>
+            </tr>
+            <tr>
+              <td>クライアント</td>
+              <td id="status-table-client-room-number"></td>
+              <td id="status-table-client-is-connected">no</td>
+            </tr>
+          </tbody>
+        </table>
     </div>
     <script src="popup.js"></script>
   </body>
